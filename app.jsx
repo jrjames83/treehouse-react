@@ -4,6 +4,8 @@ var PLAYERS = [
 	{name : "Mica Moran", score : 15},
 ]
 
+// Add a button to clear all scores
+
 var nextId = 4;
 
 var AddPlayerForm = React.createClass({
@@ -75,6 +77,7 @@ function Header(props) {
 		  <div className="header">
 		  	<Stats players = {props.players} />
 			<h1>{props.title} </h1>
+			<h3 className="clear-board" onClick={props.clearBoard}>Clear Board</h3>
 		  </div>
 		  );
 }
@@ -83,6 +86,7 @@ function Header(props) {
 Header.PropTypes = {
 	title: React.PropTypes.string.isRequired,
 	players: React.PropTypes.string.isRequired,
+	clearBoard: React.PropTypes.func.isRequired,
 }
 
 
@@ -166,12 +170,16 @@ var Application = React.createClass({
    	this.setState(this.state); // rerender
    },
 
+   clearTheBoard: function() {
+   		this.state.players = [];
+   		this.setState(this.state);
+   },
 
 
 	render: function() {
 	  return (
 			<div className="scoreboard">
-				<Header title={this.props.title} players={this.state.players}/>
+				<Header title={this.props.title} players={this.state.players} clearBoard={this.clearTheBoard}/>
 					<div className="players">
 						{this.state.players.map(function(player, id) {
 						return (

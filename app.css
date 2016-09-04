@@ -31,6 +31,13 @@ body {
   font-weight: normal;
 }
 
+.header h3 {
+  flex-grow: .8;
+  font-size: .8em;
+  letter-spacing: 3px;
+  font-weight: normal;
+}
+
 .header .stats,
 .header .stopwatch {
   width: 170px;
