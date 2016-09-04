@@ -4,9 +4,91 @@ var PLAYERS = [
 	{name : "Mica Moran", score : 15},
 ]
 
-// Add a button to clear all scores
+// Add a button to clear all scores - OK
+/*
+ Add a bonus point to all scores
+ Define the button where the action can occurr in the UI
+ using the onClick handler, pass it as a function
+ In the component where the child is declared, pass in as a prop
+ and call it the function you'd like
+
+*/
+
+/* Try to do:
+  Reset a Player's Score: could add a form
+  Reset stopwatch after a new player is added
+  Crazy idea: give the old players the running time they had prior to the new player
+*/
 
 var nextId = 4;
+
+
+
+var Stopwatch = React.createClass({
+	getInitialState() {
+	    return {
+	        running: false,
+	        elapsedTime: 0,
+	        previousTime: 0,
+
+	    };
+	},
+
+	componentDidMount: function() {
+	      this.interval = setInterval(this.onTick, 100);
+	},
+
+	componentWillUnmount: function() {
+	      clearInterval(this.interval);
+	},
+
+	onTick: function() {
+		console.log("On Tick");
+		if (this.state.running) {
+			var now = Date.now();
+			this.setState({
+				previousTime: now,
+				elapsedTime: this.state.elapsedTime + (now - this.state.previousTime)
+			});
+		}
+	},
+
+	onStart: function() {
+		this.setState({
+			running: true,
+			previousTime: Date.now(),
+		});
+	},
+
+	onStop: function() {
+		this.setState({running: false});
+
+	},
+
+	onReset: function() {
+		this.setState({
+			//running: false,
+			elapsedTime: 0,
+			previousTime: Date.now(),
+		});
+	},
+    render: function() {
+    	var seconds = Math.floor(this.state.elapsedTime / 1000);
+        return (
+            <div className="stopwatch">
+            	<h2>Stopwatch</h2>
+            	<div className="stopwatch-time">{seconds}</div>
+            		{/* ternary operator = statement so can be used in jsx */}
+                   { this.state.running ? 
+                   		<button onClick={this.onStop}>Stop</button> 
+                   		: 
+                   		<button onClick={this.onStart}>Start</button>
+                   	}
+            	<button onClick={this.onReset}>Reset</button>
+            </div>
+        );
+    }
+});
 
 var AddPlayerForm = React.createClass({
 	propTypes : {
@@ -58,7 +140,7 @@ function Stats(props) {
 				<tr>
 					<td>Total Points</td>
 					<td>{totalPoints}</td>
-				</tr>				
+				</tr>							
 			</tbody>
 		</table>
 
@@ -75,9 +157,12 @@ Stats.PropTypes = {
 function Header(props) {
 	return (
 		  <div className="header">
-		  	<Stats players = {props.players} />
+		  			<Stopwatch /> 
+
+		  	<Stats players={props.players} bonus={props.bonus} />
 			<h1>{props.title} </h1>
 			<h3 className="clear-board" onClick={props.clearBoard}>Clear Board</h3>
+			<h3 className="bonus-board" onClick={function() {props.bonus(3);}}>Bonus</h3>
 		  </div>
 		  );
 }
@@ -87,6 +172,7 @@ Header.PropTypes = {
 	title: React.PropTypes.string.isRequired,
 	players: React.PropTypes.string.isRequired,
 	clearBoard: React.PropTypes.func.isRequired,
+	bonus: React.PropTypes.func.isRequired,
 }
 
 
@@ -175,11 +261,23 @@ var Application = React.createClass({
    		this.setState(this.state);
    },
 
+   bonusBoard: function(x) {
+   	this.state.players.map(function(player, idx) {
+   		console.log(player['score']);
+   		player.score += 1;
+   	})
+   	this.setState(this.state);
+   },
+
 
 	render: function() {
 	  return (
 			<div className="scoreboard">
-				<Header title={this.props.title} players={this.state.players} clearBoard={this.clearTheBoard}/>
+				<Header title={this.props.title} players={this.state.players} 
+						clearBoard={this.clearTheBoard} 
+						bonus={function(bonusValue) {this.bonusBoard(bonusValue)}.bind(this)}
+						/>
+
 					<div className="players">
 						{this.state.players.map(function(player, id) {
 						return (
