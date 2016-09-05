@@ -1,7 +1,15 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+
+import './app.css';
+
+
 var PLAYERS = [
 	{name : "Jeff James", score : 11},
 	{name : "Chance Bobance", score : 10},
 	{name : "Mica Moran", score : 15},
+	{name : "Mica Moran2", score : 15},
 ]
 
 // Add a button to clear all scores - OK
@@ -20,7 +28,7 @@ var PLAYERS = [
   Crazy idea: give the old players the running time they had prior to the new player
 */
 
-var nextId = 4;
+var nextId = 5;
 
 
 
@@ -311,7 +319,6 @@ var Application = React.createClass({
 
 
 }); // end create application class
-
 
 // Below we are passing props to the Application component via players={PLAYERS}
 ReactDOM.render(<Application init_players={PLAYERS}  />, document.getElementById('container'));
